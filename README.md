@@ -1,2 +1,2 @@
 # PROCOM
-Para los Trabajos Práctivos
+Para los Trabajos Prácticos
