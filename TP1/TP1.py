@@ -1,10 +1,25 @@
+import time
+import serial
 from filtro import RaisedCosineFilter
 
 filtroprueba= RaisedCosineFilter(alpha=0.7, span=8, sps=8, rrc=True)
 
+ser = serial.serial_for_url('loop://', timeout=1) #me permite que yo mismo lea lo que mando a este puerto
+ser.flushInput()
+ser.flushOutput()
+
+
 print('Introduzca un comando')
 while True:
-    comando= input(">")
+    entrada = input(">")
+    mensaje = entrada + "\n"
+    mensaje_bytes= mensaje.encode()
+    ser.write(mensaje_bytes)
+    time.sleep(2)
+
+
+    comando= ser.readline().decode().strip()
+
     if "=" in comando:
         dividir= comando.split("=")
         parametro= dividir[0]
@@ -39,6 +54,7 @@ while True:
                 print("Valor invalido usar True o False")
                 
     elif comando == "exit":
+        ser.close()
         break
     elif comando == "generate":
         filtroprueba.taps = filtroprueba._generate_filter()
