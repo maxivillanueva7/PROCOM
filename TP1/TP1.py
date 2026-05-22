@@ -1,4 +1,6 @@
-import time
+import numpy as np
+import matplotlib.pyplot as plt
+#import time para la prueba de que si era el puerto serie
 import serial
 from filtro import RaisedCosineFilter
 
@@ -8,6 +10,29 @@ ser = serial.serial_for_url('loop://', timeout=1) #me permite que yo mismo lea l
 ser.flushInput()
 ser.flushOutput()
 
+def graficar_comparacion():
+    span= filtroprueba.span
+    sps= filtroprueba.sps
+    rrc= filtroprueba.sps
+
+    filtro_1= RaisedCosineFilter(alpha=0.2, span=span, sps=sps, rrc=rrc)
+    filtro_2= RaisedCosineFilter(alpha=0.5, span=span, sps=sps, rrc=rrc)
+    filtro_3= RaisedCosineFilter(alpha=0.8, span=span, sps=sps, rrc=rrc)
+
+    N= span*sps
+    t= np.arange(-N//2,N//2+1)/sps
+
+    plt.figure(figsize=(16,9))
+    plt.plot(t[:len(filtro_1.taps)], filtro_1.taps, label="Alpha=0.2")
+    plt.plot(t[:len(filtro_2.taps)], filtro_2.taps, label="Alpha=0.5")
+    plt.plot(t[:len(filtro_3.taps)], filtro_3.taps, label="Alpha=0.8")
+    plt.title("Comparación de filtros con variación de alpha")
+    plt.ylabel("Amplitud")
+    plt.xlabel("Tiempo")
+    plt.grid(True)
+    plt.legend()
+    plt.show()
+
 
 print('Introduzca un comando')
 while True:
@@ -15,7 +40,7 @@ while True:
     mensaje = entrada + "\n"
     mensaje_bytes= mensaje.encode()
     ser.write(mensaje_bytes)
-    time.sleep(2)
+    #time.sleep(2) lo use para probar que verdaderamente se este mandando por el puerto serie.
 
 
     comando= ser.readline().decode().strip()
@@ -56,11 +81,13 @@ while True:
     elif comando == "exit":
         ser.close()
         break
+    elif comando == "comparar":
+        graficar_comparacion()
     elif comando == "generate":
         filtroprueba.taps = filtroprueba._generate_filter()
         print("Filtro generado nuevamente con parámetros cambiados")
     elif comando == "help":
-        print("Comandos disponibles son plot, coef,exit, generate, alpha=<float>, span=<int>, sps=<int> y rrc=<Bool>.")
+        print("Comandos disponibles son plot, coef,exit, generate, comparar, alpha=<float>, span=<int>, sps=<int> y rrc=<Bool>.")
     elif comando == "plot":
         filtroprueba.plot(time_domain=True, freq_domain=False)
     elif comando == "coef":
