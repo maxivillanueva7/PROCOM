@@ -13,7 +13,7 @@ ser.flushOutput()
 def graficar_comparacion():
     span= filtroprueba.span
     sps= filtroprueba.sps
-    rrc= filtroprueba.sps
+    rrc= filtroprueba.rrc
 
     filtro_1= RaisedCosineFilter(alpha=0.2, span=span, sps=sps, rrc=rrc)
     filtro_2= RaisedCosineFilter(alpha=0.5, span=span, sps=sps, rrc=rrc)
@@ -31,6 +31,34 @@ def graficar_comparacion():
     plt.xlabel("Tiempo")
     plt.grid(True)
     plt.legend()
+    plt.show()
+
+def graficar_tiempo_y_frecuencia():
+    sps = filtroprueba.sps
+    span = filtroprueba.span
+    N = span * sps
+    t = np.arange(-N//2, N//2 + 1) / sps
+    t = t[:len(filtroprueba.taps)]
+    
+    #Copio lo del ejemplo de filtro para pasar a frecuencia
+    H = np.fft.fftshift(np.fft.fft(filtroprueba.taps, 1024))
+    f = np.linspace(-0.5, 0.5, len(H), endpoint=False)
+    H_dB = 20 * np.log10(np.abs(H) + 1e-6)
+
+    plt.figure(figsize=(16,9))
+    plt.subplot(1,2,1)
+    plt.plot(t[:len(filtroprueba.taps)],filtroprueba.taps)
+    plt.title("Respuesta en el Tiempo")
+    plt.xlabel("Tiempo")
+    plt.ylabel("Amplitud")
+    plt.grid(True)
+    plt.subplot(1,2,2)
+    plt.plot(f,H_dB)
+    plt.title("En frecuencia")
+    plt.xlabel("Frecuencia")
+    plt.ylabel("Magnitud en dB")
+    plt.grid(True)
+    plt.tight_layout()
     plt.show()
 
 
@@ -83,11 +111,13 @@ while True:
         break
     elif comando == "comparar":
         graficar_comparacion()
+    elif comando == "ambas":
+        graficar_tiempo_y_frecuencia()    
     elif comando == "generate":
         filtroprueba.taps = filtroprueba._generate_filter()
         print("Filtro generado nuevamente con parámetros cambiados")
     elif comando == "help":
-        print("Comandos disponibles son plot, coef,exit, generate, comparar, alpha=<float>, span=<int>, sps=<int> y rrc=<Bool>.")
+        print("Comandos disponibles son plot, coef,exit, generate, comparar, ambas (muestra ambas respuestas en tiempo y frecuencia del filtro), alpha=<float>, span=<int>, sps=<int> y rrc=<Bool>.")
     elif comando == "plot":
         filtroprueba.plot(time_domain=True, freq_domain=False)
     elif comando == "coef":
