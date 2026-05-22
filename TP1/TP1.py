@@ -33,6 +33,23 @@ def graficar_comparacion():
     plt.legend()
     plt.show()
 
+def discretizar():
+    sps = filtroprueba.sps
+    span = filtroprueba.span
+    N = span * sps
+    t = np.arange(-N//2, N//2 + 1) / sps
+    t = t[:len(filtroprueba.taps)]
+
+    plt.figure(figsize=(16,9))
+    plt.stem(t,filtroprueba.taps)
+    plt.title("Respuesta en el tiempo discretizada")
+    plt.xlabel("Tiempo")
+    plt.ylabel("Amplitud")
+    plt.grid(True)
+    plt.show()
+
+
+
 def graficar_tiempo_y_frecuencia():
     sps = filtroprueba.sps
     span = filtroprueba.span
@@ -47,7 +64,7 @@ def graficar_tiempo_y_frecuencia():
 
     plt.figure(figsize=(16,9))
     plt.subplot(1,2,1)
-    plt.plot(t[:len(filtroprueba.taps)],filtroprueba.taps)
+    plt.plot(t,filtroprueba.taps)
     plt.title("Respuesta en el Tiempo")
     plt.xlabel("Tiempo")
     plt.ylabel("Amplitud")
@@ -112,12 +129,18 @@ while True:
     elif comando == "comparar":
         graficar_comparacion()
     elif comando == "ambas":
-        graficar_tiempo_y_frecuencia()    
+        graficar_tiempo_y_frecuencia()  
+    elif comando == "discretizar":
+        discretizar()      
     elif comando == "generate":
         filtroprueba.taps = filtroprueba._generate_filter()
         print("Filtro generado nuevamente con parámetros cambiados")
     elif comando == "help":
-        print("Comandos disponibles son plot, coef,exit, generate, comparar, ambas (muestra ambas respuestas en tiempo y frecuencia del filtro), alpha=<float>, span=<int>, sps=<int> y rrc=<Bool>.")
+        print("""Comandos disponibles son 
+            plot, coef,exit, generate, 
+            comparar, ambas (muestra ambas respuestas en tiempo y frecuencia del filtro), discretizar, 
+            alpha=<float>, span=<int>, sps=<int> y rrc=<Bool>.
+            LUEGO DE CAMBIAR UN VALOR DEBE MANDAR EL COMANDO "generate" para ver el cambio aplicado""")
     elif comando == "plot":
         filtroprueba.plot(time_domain=True, freq_domain=False)
     elif comando == "coef":
