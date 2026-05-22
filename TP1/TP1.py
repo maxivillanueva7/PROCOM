@@ -96,23 +96,39 @@ while True:
         valor=dividir[1]
 
         if parametro == "alpha":
-            valor = float(valor)
-            if valor<0 or valor>1:
-                print("Valor invalido. Un valor valido es 0<=Alpha<=1.")    
-            else:
-                filtroprueba.alpha = valor
-                print(f"Valor de alpha actualizado a {valor}")
+            try:
+                valor = float(valor)
+                if valor<0 or valor>1:
+                    print("Valor invalido. Un valor valido es 0<=Alpha<=1.")    
+                else:
+                    filtroprueba.alpha = valor
+                    print(f"Valor de alpha actualizado a {valor}")
+            except ValueError:
+                print("El valor debe ser un numero.")    
+            
 
         elif parametro == "span":
-            valor = int(valor)
-            filtroprueba.span = valor
-            print(f"Valor de span actualizado a {valor}")
-
+            try:
+                valor = int(valor)
+                if valor <=0:
+                    print("El span debe ser un entero mayor a 0")
+                else:
+                    filtroprueba.span = valor
+                    print(f"Valor de span actualizado a {valor}")
+            except ValueError:
+                print("El valor debe ser un numero.")
+        
         elif parametro == "sps":
-            valor = int(valor)
-            filtroprueba.sps = valor
-            print(f"Valor de sps actualizado a {valor}")
-
+            try:
+                valor = int(valor)
+                if valor <= 0:
+                    print("El sps debe ser un entero mayor a 0")
+                else:
+                    filtroprueba.sps = valor
+                    print(f"Valor de sps actualizado a {valor}")
+            except ValueError:
+                print("El valor debe ser un numero.")
+                
         elif parametro == "rrc":
             if valor == "True":
                 filtroprueba.rrc= True
